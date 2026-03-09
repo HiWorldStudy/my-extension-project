@@ -16,6 +16,11 @@
       {
         "command": "my-watcher-test.toggleWatcher",
         "title": "Toggle Watcher"
+      },
+      {
+        "command": "my-watcher-test.listFiles",
+        "title": "List Watched Files",
+        "enablement": "my-watcher-test.isWatching"
       }
     ],
     "configuration": {

@@ -22,11 +22,13 @@ export function registerToggleCommand(context: vscode.ExtensionContext, statusBa
 function toggleWatcher(statusBar: vscode.StatusBarItem, outputChannel: vscode.OutputChannel) {
     if (isActive()) {
         stopWatcher(getCurrentWatcher());
+        vscode.commands.executeCommand('setContext', 'my-watcher-test.isWatching', false);
         outputChannel.hide();
         vscode.window.showInformationMessage('Watcher stopped');
         statusBar.text = '$(eye-closed) Watcher OFF';
     } else {
         startWatcher(outputChannel);
+        vscode.commands.executeCommand('setContext', 'my-watcher-test.isWatching', true);
         vscode.window.showInformationMessage('Watcher started');
         statusBar.text = '$(eye) Watcher ON';
     }
