@@ -17,7 +17,17 @@
         "command": "my-watcher-test.toggleWatcher",
         "title": "Toggle Watcher"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "My Watcher",
+      "properties": {
+        "my-watcher-test.globPattern": {
+          "type": "string",
+          "default": "**/*.ts",
+          "description": "Glob pattern to watch"
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run package",

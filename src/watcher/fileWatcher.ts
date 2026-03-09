@@ -11,7 +11,11 @@ const log = (outputChannel: vscode.OutputChannel, event: string) => (url: vscode
 
 export function startWatcher(outputChannel: vscode.OutputChannel): vscode.FileSystemWatcher {
     outputChannel.show();
-    currentWatcher = vscode.workspace.createFileSystemWatcher('**/*.ts');
+
+    const config = vscode.workspace.getConfiguration('my-watcher-test');
+    const pattern = config.get<string>('globPattern', '**/*.ts');
+
+    currentWatcher = vscode.workspace.createFileSystemWatcher(pattern);
 
     currentWatcher.onDidCreate(log(outputChannel, 'created'));
     currentWatcher.onDidChange(log(outputChannel, 'changed'));

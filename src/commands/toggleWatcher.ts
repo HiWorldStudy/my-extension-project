@@ -4,6 +4,19 @@ import { startWatcher, stopWatcher, getCurrentWatcher, isActive } from '../watch
 export function registerToggleCommand(context: vscode.ExtensionContext, statusBar: vscode.StatusBarItem, outputChannel: vscode.OutputChannel) {
     const toggleCommand = vscode.commands.registerCommand('my-watcher-test.toggleWatcher', () => toggleWatcher(statusBar, outputChannel));
     context.subscriptions.push(toggleCommand);
+
+    const configWatcher = vscode.workspace.onDidChangeConfiguration(e => {
+        if (e.affectsConfiguration('my-watcher-test.globPattern')) {
+            // watcher가 켜져 있으면 재시작
+            if (isActive()) {
+                stopWatcher(getCurrentWatcher());
+                startWatcher(outputChannel);
+                vscode.window.showInformationMessage('Watcher restarted');
+            } 
+        }
+    });
+
+    context.subscriptions.push(configWatcher);
 }
 
 function toggleWatcher(statusBar: vscode.StatusBarItem, outputChannel: vscode.OutputChannel) {
