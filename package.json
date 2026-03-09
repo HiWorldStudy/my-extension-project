@@ -14,14 +14,6 @@
   "contributes": {
     "commands": [
       {
-        "command": "my-watcher-test.helloWorld",
-        "title": "Hello World"
-      },
-      {
-        "command": "my-watcher-test.hellodeveloper",
-        "title": "인사하기"
-      },
-      {
         "command": "my-watcher-test.toggleWatcher",
         "title": "Toggle Watcher"
       }

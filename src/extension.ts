@@ -25,38 +25,35 @@ export function activate(context: vscode.ExtensionContext) {
 
 	context.subscriptions.push(statusBar);
 
-	const disposable = vscode.commands.registerCommand('my-watcher-test.helloWorld', () => {
-		vscode.window.showInformationMessage('Hello World from my-watcher-test!');
-	});
+	const disposable3 = vscode.commands.registerCommand('my-watcher-test.toggleWatcher', () => toggleWatcher(outputChannel, statusBar));
 
-	const disposable2 = vscode.commands.registerCommand('my-watcher-test.hellodeveloper', () => {
-		vscode.window.showInformationMessage('안녕하세요 개발자님!');
-	});
-
-	const disposable3 = vscode.commands.registerCommand('my-watcher-test.toggleWatcher', () => {
-		if (isWatching) {
-			watcher?.dispose();
-			outputChannel.hide();
-			isWatching = false;
-			vscode.window.showInformationMessage('Watcher stopped');
-			statusBar.text = '$(eye-closed) Watcher OFF';
-		} else {
-			outputChannel.show();
-			watcher = vscode.workspace.createFileSystemWatcher('**/*.ts');
-
-			watcher.onDidCreate(log(outputChannel, 'created'));
-			watcher.onDidChange(log(outputChannel, 'changed'));
-			watcher.onDidDelete(log(outputChannel, 'deleted'));
-
-			isWatching = true;
-			vscode.window.showInformationMessage('Watcher started');
-			statusBar.text = '$(eye) Watcher ON';
-		}
-	});
-
-	context.subscriptions.push(disposable);
-	context.subscriptions.push(disposable2);
 	context.subscriptions.push(disposable3);
+}
+
+function toggleWatcher(outputChannel: vscode.OutputChannel, statusBar: vscode.StatusBarItem) {
+	if (isWatching) stopWatcher(outputChannel, statusBar);
+	else startWatcher(outputChannel, statusBar);
+}
+
+function startWatcher(outputChannel: vscode.OutputChannel, statusBar: vscode.StatusBarItem) {
+	outputChannel.show();
+	watcher = vscode.workspace.createFileSystemWatcher('**/*.ts');
+
+	watcher.onDidCreate(log(outputChannel, 'created'));
+	watcher.onDidChange(log(outputChannel, 'changed'));
+	watcher.onDidDelete(log(outputChannel, 'deleted'));
+
+	isWatching = true;
+	vscode.window.showInformationMessage('Watcher started');
+	statusBar.text = '$(eye) Watcher ON';
+}
+
+function stopWatcher(outputChannel: vscode.OutputChannel, statusBar: vscode.StatusBarItem) {
+	watcher?.dispose();
+	outputChannel.hide();
+	isWatching = false;
+	vscode.window.showInformationMessage('Watcher stopped');
+	statusBar.text = '$(eye-closed) Watcher OFF';
 }
 
 export function deactivate() {}
