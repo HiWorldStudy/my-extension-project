@@ -1,33 +1,62 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
-export function activate(context: vscode.ExtensionContext) {
+let isWatching = false;
+let watcher: vscode.FileSystemWatcher | undefined;
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
+const log = (outputChannel: vscode.OutputChannel, event: string) => (url: vscode.Uri) =>
+	outputChannel.appendLine(`File ${url.fsPath} was ${event}!`);
+
+export function activate(context: vscode.ExtensionContext) {
 	console.log('Congratulations, your extension "my-watcher-test" is now active!');
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
+	const outputChannel = vscode.window.createOutputChannel('My watcher');
+
+	context.subscriptions.push({ dispose: () => watcher?.dispose() });
+	context.subscriptions.push(outputChannel);
+
+	const statusBar = vscode.window.createStatusBarItem(
+		vscode.StatusBarAlignment.Left,
+		100
+	);
+	statusBar.show();
+
+	statusBar.text = '$(eye-closed) Watcher OFF';
+	statusBar.command = 'my-watcher-test.toggleWatcher';
+
+	context.subscriptions.push(statusBar);
+
 	const disposable = vscode.commands.registerCommand('my-watcher-test.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
 		vscode.window.showInformationMessage('Hello World from my-watcher-test!');
 	});
 
 	const disposable2 = vscode.commands.registerCommand('my-watcher-test.hellodeveloper', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
 		vscode.window.showInformationMessage('안녕하세요 개발자님!');
+	});
+
+	const disposable3 = vscode.commands.registerCommand('my-watcher-test.toggleWatcher', () => {
+		if (isWatching) {
+			watcher?.dispose();
+			outputChannel.hide();
+			isWatching = false;
+			vscode.window.showInformationMessage('Watcher stopped');
+			statusBar.text = '$(eye-closed) Watcher OFF';
+		} else {
+			outputChannel.show();
+			watcher = vscode.workspace.createFileSystemWatcher('**/*.ts');
+
+			watcher.onDidCreate(log(outputChannel, 'created'));
+			watcher.onDidChange(log(outputChannel, 'changed'));
+			watcher.onDidDelete(log(outputChannel, 'deleted'));
+
+			isWatching = true;
+			vscode.window.showInformationMessage('Watcher started');
+			statusBar.text = '$(eye) Watcher ON';
+		}
 	});
 
 	context.subscriptions.push(disposable);
 	context.subscriptions.push(disposable2);
+	context.subscriptions.push(disposable3);
 }
 
-// This method is called when your extension is deactivated
 export function deactivate() {}

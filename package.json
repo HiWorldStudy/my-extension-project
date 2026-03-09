@@ -9,7 +9,7 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": ["workspaceContains:**/*.ts"],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
@@ -20,6 +20,10 @@
       {
         "command": "my-watcher-test.hellodeveloper",
         "title": "인사하기"
+      },
+      {
+        "command": "my-watcher-test.toggleWatcher",
+        "title": "Toggle Watcher"
       }
     ]
   },
