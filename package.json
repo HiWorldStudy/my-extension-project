@@ -23,6 +23,14 @@
         "enablement": "my-watcher-test.isWatching"
       }
     ],
+    "views": {
+      "explorer": [
+        {
+          "id": "my-watcher-test.watchedFiles",
+          "name": "Watched Files"
+        }
+      ]
+    },
     "configuration": {
       "title": "My Watcher",
       "properties": {

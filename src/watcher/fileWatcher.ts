@@ -9,7 +9,7 @@ export function getCurrentWatcher(): vscode.FileSystemWatcher | undefined { retu
 const log = (outputChannel: vscode.OutputChannel, event: string) => (url: vscode.Uri) =>
     outputChannel.appendLine(`File ${url.fsPath} was ${event}!`);
 
-export function startWatcher(outputChannel: vscode.OutputChannel): vscode.FileSystemWatcher {
+export function startWatcher(outputChannel: vscode.OutputChannel, onFileEvent?: () => void): vscode.FileSystemWatcher {
     outputChannel.show();
 
     const config = vscode.workspace.getConfiguration('my-watcher-test');
@@ -17,9 +17,16 @@ export function startWatcher(outputChannel: vscode.OutputChannel): vscode.FileSy
 
     currentWatcher = vscode.workspace.createFileSystemWatcher(pattern);
 
-    currentWatcher.onDidCreate(log(outputChannel, 'created'));
+    currentWatcher.onDidCreate((url) => {
+        log(outputChannel, 'created')(url);
+        onFileEvent?.();
+    });
+    currentWatcher.onDidDelete((url) => {
+        log(outputChannel, 'deleted')(url);
+        onFileEvent?.();
+    });
+    
     currentWatcher.onDidChange(log(outputChannel, 'changed'));
-    currentWatcher.onDidDelete(log(outputChannel, 'deleted'));
 
     isWatching = true;
     return currentWatcher;

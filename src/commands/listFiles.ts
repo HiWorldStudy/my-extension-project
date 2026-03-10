@@ -15,7 +15,7 @@ async function  findFiles(outputChannel: vscode.OutputChannel) {
     '**/node_modules/**'  // exclude 패턴 (null이면 제외 없음)
     );
 
-    if(files.length == 0)
+    if(files.length === 0)
     {
         outputChannel.appendLine(`No files found for pattern: ${pattern}`);
         return;
