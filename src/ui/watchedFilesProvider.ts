@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import * as path from 'path';
 import { isActive } from '../watcher/fileWatcher';
 
 export class WatchedFilesProvider implements vscode.TreeDataProvider<vscode.TreeItem> {
@@ -16,11 +17,26 @@ export class WatchedFilesProvider implements vscode.TreeDataProvider<vscode.Tree
     async getChildren(): Promise<vscode.TreeItem[]> {
         if(!isActive())
             return [];
-        
+
         const config = vscode.workspace.getConfiguration('my-watcher-test');
         const pattern = config.get<string>('globPattern', '**/*.ts');
         const files = await vscode.workspace.findFiles(pattern, '**/node_modules/**');
-        return files.map(uri => new vscode.TreeItem(uri.fsPath));
+        
+        if(files.length === 0)
+            return [];
+
+        return files.map(uri => {
+            const label = path.basename(uri.fsPath);
+            const item = new vscode.TreeItem(label);
+            item.command = {
+                command: 'vscode.open',    // VSCode 내장 커맨드
+                title: 'Open File',
+                arguments: [uri]           // 열 파일의 Uri
+            };
+            item.tooltip = uri.fsPath;    // 마우스 오버 시 전체 경로
+
+            return item;
+        });
     }
 
      refresh() {
