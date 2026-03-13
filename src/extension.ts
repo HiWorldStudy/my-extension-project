@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { registerToggleCommand } from './commands/toggleWatcher';
 import { registerListFileCommand } from './commands/listFiles';
+import { registerDocumentEvents  } from './commands/documentEvents';
 import { createStatusBar } from './ui/statusBar';
 import { getCurrentWatcher } from './watcher/fileWatcher';
 import { WatchedFilesProvider  } from './ui/watchedFilesProvider';
@@ -20,6 +21,8 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push({ dispose: () => getCurrentWatcher()?.dispose() });
 
 	registerListFileCommand(context, outputChannel);
+
+	registerDocumentEvents(context, outputChannel);
 
 
 }
